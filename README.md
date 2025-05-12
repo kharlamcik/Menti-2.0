@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="450" height="120" align="center" src="https://i.pinimg.com/736x/73/46/56/734656d0e2c323825a3bac1e6d89a611.jpg">
+  <img width="450" height="120" align="center" src="https://i.pinimg.com/736x/c9/3c/9c/c93c9c83f2ccc4f9bf5543057af087ad.jpg>
   <br>
   <img align="center" src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
 </p>
@@ -86,14 +86,4 @@ const QUIZZ_CONFIG = {
 
 - Once everyone is ready, start the game with button on the top left of the screen of manager.
 
-## 📝 Contributing
 
-- Create a fork
-
-- Create work branch (Example: githubUsername/featureName).
-
-- Commit and push your changes in the work branch.
-
-- Open a pull request.
-
-- Your pull request would be merged and changes will be reflected in the main repository.
