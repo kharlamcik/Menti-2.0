@@ -1,0 +1,19 @@
+.addedQuestions {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+}
+
+.questionCard {
+  background: #ffffff;
+  border: 1px solid #4797e2;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease; /* Плавное изменение всех свойств */
+}
+
+.questionCard:hover {
+  transform: scale(1.01); /* Увеличение размера при наведении */
+}
+
