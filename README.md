@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="450" height="120" align="center" src="https://raw.githubusercontent.com/Ralex91/Rahoot/main/.github/logo.svg">
+  <img width="450" height="120" align="center" src="https://i.pinimg.com/736x/73/46/56/734656d0e2c323825a3bac1e6d89a611.jpg">
   <br>
   <img align="center" src="https://api.visitorbadge.io/api/visitors?path=https://github.com/Ralex91/Rahoot/edit/main/README.md&countColor=%2337d67a">
 </p>
