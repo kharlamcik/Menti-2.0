@@ -14,6 +14,7 @@
   "dependencies": {
     "clsx": "^2.1.0",
     "concurrently": "^8.2.2",
+    "dotenv": "^16.5.0",
     "mongoose": "^8.14.2",
     "next": "^14.2.21",
     "react": "^18",
