@@ -1,15 +1,19 @@
 import mongoose from "mongoose";
 
 const testSchema = new mongoose.Schema({
-  title: String,
+  subject: String,
+  password: String,
   questions: [
     {
       question: String,
-      options: [String],
-      correctAnswer: String,
+      answers: [String],
+      solution: Number,
+      cooldown: Number,
+      time: Number,
     },
   ],
 });
+
 
 const Test = mongoose.model("Test", testSchema);
 

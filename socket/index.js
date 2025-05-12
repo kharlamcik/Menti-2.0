@@ -25,7 +25,8 @@ let gameState = deepClone(GAME_STATE_INIT)
 const allTests = await Test.find({})
 console.log("Найдено тестов:", allTests.length)
 allTests.forEach((test, index) => {
-  console.log(`Тест ${index + 1}: ${test.title}`)
+  console.log(`Тест ${index + 1}: ${test.subject}`)
+
 })
 
 const io = new Server({

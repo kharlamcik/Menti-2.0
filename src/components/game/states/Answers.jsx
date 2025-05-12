@@ -85,7 +85,6 @@ export default function Answers({
       playMusic()
     }
   }, [isPlaying])
-  
 
   useEffect(() => {
     return () => {
@@ -146,13 +145,15 @@ export default function Answers({
         {!responses && (
           <div className="mx-auto mb-4 flex w-full max-w-7xl justify-between gap-1 px-2 text-lg font-bold text-white md:text-xl">
             <div
-  className={`flex flex-col items-center rounded-full px-4 text-lg font-bold ${
-    cooldown < 7 ? "bg-red-500 animate-pulse-red text-white" : "bg-black/40"
-  }`}
->
-  <span className="translate-y-1 text-sm">Время</span>
-  <span>{cooldown}</span>
-</div>
+              className={`flex flex-col items-center rounded-full px-4 text-lg font-bold ${
+                cooldown < 7
+                  ? "animate-pulse-red bg-red-500 text-white"
+                  : "bg-black/40"
+              }`}
+            >
+              <span className="translate-y-1 text-sm">Время</span>
+              <span>{cooldown}</span>
+            </div>
 
             <div className="flex flex-col items-center rounded-full bg-black/40 px-4 text-lg font-bold">
               <span className="translate-y-1 text-sm">Ответы</span>
