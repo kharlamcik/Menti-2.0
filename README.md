@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="734" height="414" align="center" src="https://i.pinimg.com/736x/c9/3c/9c/c93c9c83f2ccc4f9bf5543057af087ad.jpg>
+  <img width="734" height="414" align="center" src="https://i.pinimg.com/736x/99/85/91/9985918c8cd64603974de7525bbf5460.jpg>
   <br>
   <img align="center" src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
 </p>
