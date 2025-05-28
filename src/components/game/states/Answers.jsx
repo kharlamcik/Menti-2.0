@@ -177,7 +177,7 @@ export default function Answers({
                   <img
                     src={answer}
                     alt={`Ответ ${key + 1}`}
-                    className="h-50 max-h-52 w-auto rounded-md object-contain shadow-md"
+                    className="h-48 max-h-52 w-auto rounded-md object-contain shadow-md"
                   />
                 ) : (
                   <span className="text-base md:text-lg">{answer}</span>

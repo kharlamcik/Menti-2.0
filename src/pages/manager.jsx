@@ -6,6 +6,7 @@ import { usePlayerContext } from "@/context/player"
 import { useSocketContext } from "@/context/socket"
 import { useRouter } from "next/router"
 import { createElement, useEffect, useState } from "react"
+import { QRCode } from "react-qrcode-logo" // Убедись, что установлен react-qrcode-logo
 
 export default function Manager() {
   const { socket } = useSocketContext()
@@ -21,39 +22,35 @@ export default function Manager() {
 
   useEffect(() => {
     socket.on("game:status", (status) => {
-      setState({
-        ...state,
+      setState((prevState) => ({
+        ...prevState,
         status: status,
         question: {
-          ...state.question,
+          ...prevState.question,
           current: status.question,
         },
-      })
+      }))
     })
 
     socket.on("manager:inviteCode", (inviteCode) => {
-      setState({
-        ...state,
+      setState((prevState) => ({
+        ...prevState,
         created: true,
         status: {
-          ...state.status,
+          ...prevState.status,
           data: {
-            ...state.status.data,
+            ...prevState.status.data,
             inviteCode: inviteCode,
           },
         },
-      })
+      }))
     })
 
     return () => {
       socket.off("game:status")
       socket.off("manager:inviteCode")
     }
-  }, [state])
-
-  const handleCreate = () => {
-    socket.emit("manager:createRoom")
-  }
+  }, [])
 
   const handleSkip = () => {
     setNextText("Скип")
@@ -62,20 +59,21 @@ export default function Manager() {
       case "SHOW_ROOM":
         socket.emit("manager:startGame")
         break
-
       case "SELECT_ANSWER":
         socket.emit("manager:abortQuiz")
         break
-
       case "SHOW_RESPONSES":
         socket.emit("manager:showLeaderboard")
         break
-
       case "SHOW_LEADERBOARD":
         socket.emit("manager:nextQuestion")
         break
     }
   }
+
+  const inviteLink = state.status?.data?.inviteCode
+    ? `http://192.168.0.190:3000/`
+    : ""
 
   return (
     <>
@@ -86,6 +84,27 @@ export default function Manager() {
       ) : (
         <>
           <GameWrapper textNext={nextText} onNext={handleSkip} manager>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "20px",
+              }}
+            >
+              {inviteLink && (
+                <QRCode
+                  value={inviteLink}
+                  size={200}
+                  logoImage="/logo.png" // убери, если логотип не нужен
+                  logoWidth={40}
+                  qrStyle="dots"
+                />
+              )}
+              
+            </div>
+
             {GAME_STATE_COMPONENTS_MANAGER[state.status.name] &&
               createElement(GAME_STATE_COMPONENTS_MANAGER[state.status.name], {
                 data: state.status.data,
