@@ -172,7 +172,17 @@ export default function Answers({
               icon={ANSWERS_ICONS[key]}
               onClick={() => handleAnswer(key)}
             >
-              {answer}
+              <div className="flex w-full flex-col items-center justify-center text-center">
+                {/https?:\/\/.*\.(jpeg|jpg|png|gif|webp)$/i.test(answer) ? (
+                  <img
+                    src={answer}
+                    alt={`Ответ ${key + 1}`}
+                    className="h-50 max-h-52 w-auto rounded-md object-contain shadow-md"
+                  />
+                ) : (
+                  <span className="text-base md:text-lg">{answer}</span>
+                )}
+              </div>
             </AnswerButton>
           ))}
         </div>

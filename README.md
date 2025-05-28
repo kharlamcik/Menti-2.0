@@ -27,7 +27,7 @@
 
 1. #### Check websocket connfiguration in [config.mjs](config.mjs)
 
-   If you want the client to connect directly to the websocket server, edit the [config.mjs](config.mjs) file and change the localhost to your public IP address.
+   Если вы хотите, чтобы клиент подключался напрямую к серверу веб-сокета, отредактируйте файл [config.mjs](config.mjs) и измените localhost на свой публичный IP-адрес.
 
    ```js
    export const WEBSOCKET_PUBLIC_URL = "http://1.2.3.4:3100/"

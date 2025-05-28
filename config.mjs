@@ -1,4 +1,5 @@
-export const WEBSOCKET_PUBLIC_URL = "http://localhost:5505/"
+export const WEBSOCKET_PUBLIC_URL = "http://192.168.0.190:5505/"
+
 export const WEBSOCKET_SERVER_PORT = 5505
 
 const QUIZZ_CONFIG = {

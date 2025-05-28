@@ -11,9 +11,24 @@ module.exports = {
         primary: "#0059ff",
         secondary: "#0b111a",
       },
+      keyframes: {
+        ripple: {
+          "0%": { transform: "scale(0)", opacity: "0.5" },
+          "100%": { transform: "scale(2.5)", opacity: "0" },
+        },
+      },
+      animation: {
+        ripple: "ripple 0.6s ease-out",
+      },
     },
   },
-  safelist: ["grid-cols-4", "grid-cols-3", "grid-cols-2", {
-    pattern: /bg-(red|blue|yellow|green)/}],
+  safelist: [
+    "grid-cols-4",
+    "grid-cols-3",
+    "grid-cols-2",
+    {
+      pattern: /bg-(red|blue|yellow|green)/,
+    },
+  ],
   plugins: [],
 }
