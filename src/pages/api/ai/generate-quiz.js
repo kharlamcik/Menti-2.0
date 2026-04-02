@@ -1,65 +1,79 @@
-// pages/api/ai/generate-quiz.js
-import OpenAI from "openai";
-
-const openrouter = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Только POST разрешён" });
   }
 
-  try {
-    const { topic, numQuestions = 10 } = req.body;
+  const { topic, numQuestions = 10 } = req.body;
 
-    if (!topic || topic.trim().length < 3) {
-      return res.status(400).json({ error: "Тема должна быть не короче 3 символов" });
-    }
+  if (!topic || topic.trim().length < 3) {
+    return res.status(400).json({ error: "Тема должна быть не короче 3 символов" });
+  }
 
-    if (!process.env.OPENROUTER_API_KEY) {
-      return res.status(500).json({ error: "OPENROUTER_API_KEY не найден в .env.local" });
-    }
+  const prompt = `
+Ты — профессиональный создатель викторин.
 
-    const prompt = `Ты — профессиональный создатель викторин на русском языке.
+Создай викторину по теме "${topic}".
+Количество вопросов: ${numQuestions}.
 
-Создай викторину по теме "${topic.trim()}". Количество вопросов: ${numQuestions}.
+Верни ТОЛЬКО JSON.
+Ответ должен начинаться с { и заканчиваться }.
 
-Ответь **только чистым JSON** без markdown, без \`\`\`json, без объяснений.
-
+Формат:
 {
-  "subject": "Короткое название темы",
-  "questions": [
-    {
-      "question": "Текст вопроса?",
-      "answers": ["Вариант 1", "Вариант 2", "Вариант 3", "Вариант 4"],
-      "solution": 2,
-      "time": 20,
-      "cooldown": 5
-    }
-  ]
-}`;
+ "subject": "название темы",
+ "questions": [
+  {
+   "question": "текст",
+   "answers": ["a","b","c","d"],
+   "solution": 0,
+   "time": 20,
+   "cooldown": 5
+  }
+ ]
+}
+`;
 
-    const completion = await openrouter.chat.completions.create({
-      model: "google/gemini-2.0-flash-thinking-exp:free",   // бесплатная мощная модель
-      // model: "meta-llama/llama-3.3-70b-instruct:free",   // альтернативная бесплатная
+  try {
+    if (!process.env.OPENROUTER_API_KEY) {
+      return res.status(500).json({ error: "OPENROUTER_API_KEY не найден" });
+    }
+
+    const OpenAI = (await import("openai")).default;
+    const client = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: "https://openrouter.ai/api/v1",
+    });
+
+    const completion = await client.chat.completions.create({
+      model: "qwen/qwen3.6-plus:free",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 4000,
+      max_tokens: 1500,
     });
 
-    let content = completion.choices[0].message.content.trim();
-    content = content.replace(/```json|```/gi, "").trim();
+    let content = completion.choices?.[0]?.message?.content || "";
 
-    const quiz = JSON.parse(content);
+    // Очистка лишнего текста
+    content = content.trim().replace(/```json|```/gi, "").trim();
+    const jsonStart = content.indexOf("{");
+    const jsonEnd = content.lastIndexOf("}") + 1;
+    if (jsonStart !== -1 && jsonEnd > jsonStart) {
+      content = content.slice(jsonStart, jsonEnd);
+    }
+
+    let quiz;
+    try {
+      quiz = JSON.parse(content);
+    } catch (e) {
+      return res.status(500).json({
+        error: "Ошибка генерации (невалидный JSON)",
+        debug: content,
+      });
+    }
 
     return res.status(200).json({ quiz });
-
-  } catch (error) {
-    console.error("OpenRouter Error:", error);
-    return res.status(500).json({
-      error: "Ошибка OpenRouter: " + (error.message || "Неизвестная ошибка")
-    });
+  } catch (err) {
+    console.error("AI генерация упала:", err);
+    return res.status(500).json({ error: "Ошибка генерации", debug: err.message });
   }
 }
