@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import QuizForm from "../components/QuizForm/QuizForm";
 import QuizListPage from "../components/QuizForm/Qizicki";
+import AIQuizGenerator from "../components/QuizForm/AIQuizGenerator"; // ← новый импорт
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,10 +13,11 @@ const CreateQuizPage = () => {
   const [activeTab, setActiveTab] = useState("create");
 
   const tabs = [
-    { id: "create", label: "Создать викторину", icon: "✨" },
-    { id: "history", label: "Мои викторины", icon: "📋" },
-    { id: "settings", label: "Настройки", icon: "⚙️" },
-  ];
+  { id: "create", label: "Создать вручную", icon: "✨" },     // ← новая
+  { id: "history", label: "Мои викторины", icon: "📋" },
+  { id: "ai", label: "AI Генератор", icon: "🤖" },
+  { id: "settings", label: "Настройки", icon: "⚙️" },
+];
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
@@ -123,7 +125,17 @@ const CreateQuizPage = () => {
                 <QuizListPage />
               </motion.div>
             )}
-
+            {activeTab === "ai" && (                     // ← новый блок
+            <motion.div
+              key="ai"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.35 }}
+            >
+              <AIQuizGenerator />
+            </motion.div>
+          )}
             {activeTab === "settings" && (
               <motion.div
                 key="settings"
