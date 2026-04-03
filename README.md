@@ -5,14 +5,14 @@
 </p>
 
 <p align="center">
-  <img width="414" height="734" src="https://i.pinimg.com/736x/1d/02/f5/1d02f5626950dba1f253cfbb9b28921d.jpg">
+  <img width="734" height="414" align="center" src="https://i.pinimg.com/736x/c9/3c/9c/c93c9c83f2ccc4f9bf5543057af087ad.jpg">
 </p>
 
 <p align="center">
   <img src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
 </p>
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## ✨ Features
 
@@ -24,7 +24,7 @@
 - 📊 Live leaderboard
 - 🔗 Invite system with game code
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## 🛠 Tech Stack
 
@@ -36,13 +36,13 @@
 <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb"/>
 </p>
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## ⚙️ Prerequisites
 
 - Node.js version **20 or higher**
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## 📖 Getting Started
 
@@ -59,7 +59,7 @@
     <br>
     <hr>
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## 📦 Running the Application in Production Mode:
 
@@ -85,7 +85,7 @@
    npm run all
    ```
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## ⚙️ Running the Application in Development Mode:
 
@@ -121,7 +121,7 @@ const QUIZZ_CONFIG = {
 }
 ```
 
-<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+---
 
 ## 🤔 How to use
 
