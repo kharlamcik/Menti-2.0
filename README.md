@@ -1,14 +1,7 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:22c55e,100:00c3ff&height=250&section=header&text=Menti%202.0&fontSize=60&fontColor=ffffff"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:8871e5,100:b678c4&height=250&section=header&text=Menti%202.0&fontSize=60&fontColor=ffffff"/>
 
 <p align="center">
-<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=28&pause=1000&color=22C55E&center=true&vCenter=true&width=700&lines=Realtime+Quiz+Platform;Mentimeter+Clone;React+%2B+Node.js+%2B+Socket.io+%2B+MongoDB">
-</p>
-
-<p align="center">
-<img src="https://img.shields.io/github/stars/kharlamcik/Menti-2.0?style=for-the-badge"/>
-<img src="https://img.shields.io/github/forks/kharlamcik/Menti-2.0?style=for-the-badge"/>
-<img src="https://img.shields.io/github/issues/kharlamcik/Menti-2.0?style=for-the-badge"/>
-<img src="https://img.shields.io/github/license/kharlamcik/Menti-2.0?style=for-the-badge"/>
+<img src="https://readme-typing-svg.herokuapp.com?font=Roboto&size=28&pause=1000&color=D9B4FF&center=true&vCenter=true&width=700&lines=Realtime+Quiz+Platform;Mentimeter+Clone;React+%2B+Node.js+%2B+Socket.io+%2B+MongoDB">
 </p>
 
 <p align="center">
@@ -19,9 +12,9 @@
   <img src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
 </p>
 
----
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
-# ✨ Features
+## ✨ Features
 
 - ⚡ Realtime multiplayer quiz
 - 🎮 Manager panel for controlling the game
@@ -31,9 +24,9 @@
 - 📊 Live leaderboard
 - 🔗 Invite system with game code
 
----
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
-# 🛠 Tech Stack
+## 🛠 Tech Stack
 
 <p align="center">
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react"/>
@@ -43,13 +36,13 @@
 <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb"/>
 </p>
 
----
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
-# ⚙️ Prerequisites
+## ⚙️ Prerequisites
 
 - Node.js version **20 or higher**
 
----
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
 ## 📖 Getting Started
 
@@ -65,6 +58,8 @@
 
     <br>
     <hr>
+
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
 ## 📦 Running the Application in Production Mode:
 
@@ -89,6 +84,8 @@
    ```bash
    npm run all
    ```
+
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
 
 ## ⚙️ Running the Application in Development Mode:
 
@@ -124,6 +121,8 @@ const QUIZZ_CONFIG = {
 }
 ```
 
+<img src="https://user-images.githubusercontent.com/74038190/212284100-1d2a4d89.gif">
+
 ## 🤔 How to use
 
 - Go to [https://localhost:3000/manager](https://localhost:3000/manager) enter manager password.
@@ -134,7 +133,6 @@ const QUIZZ_CONFIG = {
 
 - Once everyone is ready, start the game with button on the top left of the screen of manager.
 
-## 🤔 How to use MongoDB? Create new date base use next code
 
 ```js
 use rahooQuizDB
