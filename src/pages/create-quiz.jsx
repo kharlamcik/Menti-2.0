@@ -176,9 +176,17 @@ const CreateQuizPage = () => {
         progressClassName="h-1 bg-white/30"    // полоса прогресса в стиле стекла
       />
       {/* Футер */}
-      <footer className="relative z-10 text-center py-8 text-gray-500 text-sm">
-        Made with ❤️ for fun quizzes
-      </footer>
+<footer className="relative z-10 text-center py-8 text-gray-500 text-sm">
+  Made with ❤️ for fun quizzes ·{" "}
+  <a
+    href="https://github.com/kharlamcik/Menti-2.0"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-indigo-400 hover:text-indigo-300 underline"
+  >
+    GitHub 🐙
+  </a>
+</footer>
       
       
 

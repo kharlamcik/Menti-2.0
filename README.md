@@ -1,12 +1,55 @@
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:22c55e,100:00c3ff&height=250&section=header&text=Menti%202.0&fontSize=60&fontColor=ffffff"/>
+
 <p align="center">
-  <img width="734" height="414" align="center" src="https://i.pinimg.com/736x/c9/3c/9c/c93c9c83f2ccc4f9bf5543057af087ad.jpg">
-  <br>
-  <img align="center" src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
+<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=28&pause=1000&color=22C55E&center=true&vCenter=true&width=700&lines=Realtime+Quiz+Platform;Mentimeter+Clone;React+%2B+Node.js+%2B+Socket.io+%2B+MongoDB">
 </p>
 
-## ⚙️ Prerequisites
+<p align="center">
+<img src="https://img.shields.io/github/stars/kharlamcik/Menti-2.0?style=for-the-badge"/>
+<img src="https://img.shields.io/github/forks/kharlamcik/Menti-2.0?style=for-the-badge"/>
+<img src="https://img.shields.io/github/issues/kharlamcik/Menti-2.0?style=for-the-badge"/>
+<img src="https://img.shields.io/github/license/kharlamcik/Menti-2.0?style=for-the-badge"/>
+</p>
 
-- Node.js version 20 or higher
+<p align="center">
+  <img width="734" height="414" src="https://i.pinimg.com/736x/1d/02/f5/1d02f5626950dba1f253cfbb9b28921d.jpg">
+</p>
+
+<p align="center">
+  <img src="https://api.visitorbadge.io/api/visitors?path=kharlamcik/Menti-2.0&countColor=%2337d67a">
+</p>
+
+---
+
+# ✨ Features
+
+- ⚡ Realtime multiplayer quiz
+- 🎮 Manager panel for controlling the game
+- 🧠 Custom quiz creation
+- 🖼 Image questions support
+- ☁ Word cloud question type
+- 📊 Live leaderboard
+- 🔗 Invite system with game code
+
+---
+
+# 🛠 Tech Stack
+
+<p align="center">
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react"/>
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js"/>
+<img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express"/>
+<img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io"/>
+<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb"/>
+</p>
+
+---
+
+# ⚙️ Prerequisites
+
+- Node.js version **20 or higher**
+
+---
 
 ## 📖 Getting Started
 
@@ -91,95 +134,7 @@ const QUIZZ_CONFIG = {
 
 - Once everyone is ready, start the game with button on the top left of the screen of manager.
 
-```js
-use rahooQuizDB
-
-db.quizzes.insertOne({
-  password: "PASSWORD",
-  subject: "Adobe",
-  questions: [
-    {
-      question: "Кто основатели Adobe?",
-      answers: [
-        "Стив Джобс и Чарльз Гешке",
-        "Джон Уорнок и Чарльз Гешке",
-        "Джон Джонс и Чарльз Гески",
-        "Билл Гейтс"
-      ],
-      solution: 1,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "Какое самое известное программное обеспечение Adobe?",
-      answers: ["Encore", "AfterEffect", "Creative Cloud", "Photoshop"],
-      image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=500&auto=webp",
-      solution: 3,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "Когда была основана Adobe?",
-      answers: ["2000", "1982", "2003", "1987"],
-      solution: 1,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "Где находится штаб-квартира Adobe?",
-      answers: [
-        "Сан-Хосе, Калифорния",
-        "Букворм, Каскуи",
-        "Даунтаун, Техас",
-        "Токио, Япония"
-      ],
-      solution: 0,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "Сколько сотрудников работает в Adobe?",
-      answers: [
-        "15 423 сотрудника",
-        "30 803 сотрудника",
-        "25 988 сотрудников",
-        "5 073 сотрудника"
-      ],
-      image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=500&auto=webp",
-      solution: 2,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "Кто текущий генеральный директор Adobe?",
-      answers: [
-        "Джон Уорнок",
-        "Виктор Ньювэй",
-        "Марк Ява",
-        "Шантану Нарайен"
-      ],
-      image: "https://images.unsplash.com/photo-1435348773030-a1d74f568bc2?q=80&w=500&auto=webp",
-      solution: 3,
-      cooldown: 5,
-      time: 15
-    },
-    {
-      question: "На чём сосредоточен основной бизнес Adobe?",
-      answers: [
-        "Креативное ПО",
-        "Видеоигры",
-        "Логистическое ПО",
-        "Другое"
-      ],
-      image: "https://images.unsplash.com/photo-1582736317407-371893d9e146?q=80&w=500&auto=webp",
-      solution: 0,
-      cooldown: 5,
-      time: 15
-    }
-  ]
-})
-
-```
+## 🤔 How to use MongoDB? Create new date base use next code
 
 ```js
 use rahooQuizDB
