@@ -1,200 +1,257 @@
-import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Button from "@/components/Button";
+import React, { useEffect, useState } from "react"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import Button from "@/components/Button"
+import CustomButton from "./components/CustomButton"
+import background from "@/assets/e285661a023fb83c8d7f975980422c22.gif"
 
 const QuizListPage = () => {
-  const [quizzes, setQuizzes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [openQuizId, setOpenQuizId] = useState(null);
+  const [quizzes, setQuizzes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [openQuizId, setOpenQuizId] = useState(null)
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const res = await fetch("/api/list");
-        if (!res.ok) throw new Error("Ошибка загрузки викторин");
-        const data = await res.json();
-        setQuizzes(data);
+        const res = await fetch("/api/list")
+        if (!res.ok) throw new Error("Ошибка загрузки викторин")
+        const data = await res.json()
+        setQuizzes(data)
       } catch (e) {
-        setError(e.message);
+        setError(e.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchQuizzes();
-  }, []);
+    }
+    fetchQuizzes()
+  }, [])
 
   const toggleQuiz = (password) => {
-    setOpenQuizId(openQuizId === password ? null : password);
-  };
+    setOpenQuizId(openQuizId === password ? null : password)
+  }
 
   const copyPassword = (password) => {
     navigator.clipboard.writeText(password).then(() => {
       toast.success(`Пароль "${password}" скопирован!`, {
         position: "top-center",
         autoClose: 2000,
-      });
-    });
-  };
+      })
+    })
+  }
 
-  if (loading) return <div className="text-center py-20 text-xl">Загрузка викторин...</div>;
-  if (error) return <div className="text-center text-red-500 py-20">{error}</div>;
+  const getQuizStyle = (password) => {
+    const hash = password
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    const index = hash % 8 // меняй 8 на большее число, если добавишь больше вариантов
+
+    const gradients = [
+      "from-indigo-500 via-purple-500 to-violet-600",
+      "from-pink-500 via-rose-500 to-orange-500",
+      "from-emerald-500 via-teal-500 to-cyan-500",
+      "from-amber-500 via-yellow-500 to-orange-500",
+      "from-purple-500 via-fuchsia-500 to-pink-500",
+      "from-blue-500 via-cyan-500 to-teal-500",
+      "from-violet-500 via-purple-500 to-indigo-600",
+      "from-rose-500 via-pink-500 to-purple-600",
+    ]
+
+    const emojis = ["🎯", "🚀", "🌟", "💡", "🔥", "🧠", "⚡", "🎲"]
+
+    return {
+      gradient: gradients[index],
+      emoji: emojis[index],
+    }
+  }
+
+  if (loading)
+    return <div className="py-20 text-center text-xl">Загрузка викторин...</div>
+  if (error)
+    return <div className="py-20 text-center text-red-500">{error}</div>
   if (quizzes.length === 0) {
     return (
-      <div className="text-center py-20">
+      <div className="py-20 text-center">
         <p className="text-2xl text-gray-500">У вас пока нет викторин</p>
       </div>
-    );
+    )
   }
 
   return (
     <div className="mx-auto max-w-4xl p-6">
-      <div className="flex justify-between items-center mb-10">
+      <div className="mb-10 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-white">Мои викторины</h1>
-        <Button 
-          onClick={() => window.location.href = '/create-quiz'}
-          className="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 rounded-2xl transition-all active:scale-95"
+        <CustomButton
+          onClick={() => (window.location.href = "/create-quiz")}
+          color="bg-gradient-to-r from-indigo-600 to-violet-600"
+          hoverColor="from-purple-600 to-fuchsia-600"
+          textColor="text-white"
+          size="md"
         >
           + Создать новую викторину
-        </Button>
+        </CustomButton>
       </div>
 
       <div className="space-y-6">
         {quizzes.map((quiz) => {
-          const isOpen = openQuizId === quiz.password;
+          const isOpen = openQuizId === quiz.password
+          const quizStyle = getQuizStyle(quiz.password)
 
           return (
             <div
               key={quiz.password}
-              className="group bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100 hover:border-indigo-200 transition-all duration-300 relative"
+              className="group relative mx-auto w-full max-w-4xl overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-2xl"
             >
-              {/* Анимированный градиентный перелив сверху */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 overflow-hidden">
-                <div className="h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+              {/* Анимированная полоска */}
+              <div
+                className={`absolute left-0 right-0 top-0 bg-gradient-to-r ${quizStyle.gradient} 
+              overflow-hidden transition-all duration-500 ease-out
+              ${isOpen ? "h-6" : "h-[6px]"}`}
+              >
+                <div className="animate-shimmer h-full w-[150%] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
               </div>
 
-              {/* Основная карточка */}
+              {/* Основная кликабельная часть */}
               <div
                 onClick={() => toggleQuiz(quiz.password)}
-                className="pt-6 pb-5 px-6 cursor-pointer flex items-center justify-between hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                className="flex cursor-pointer items-center justify-between p-8 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-violet-50 group-hover:to-fuchsia-50"
               >
-                <div className="flex-1 pr-4">
-                  <h2 className="text-2xl font-semibold text-gray-900 group-hover:text-indigo-700 transition-colors">
-                    {quiz.subject}
-                  </h2>
-                  <p className="text-gray-500 mt-1.5">
-                    {quiz.questions?.length ?? 0} вопросов • Пароль:{" "}
-                    <span className="font-mono font-medium text-indigo-600">
-                      {quiz.password}
-                    </span>
-                  </p>
+                <div className="flex items-center gap-6">
+                  {/* Иконка/номер викторины */}
+                  <div
+                    className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${quizStyle.gradient} text-3xl shadow-lg transition-transform group-hover:scale-110`}
+                  >
+                    {quizStyle.emoji}
+                  </div>
+
+                  <div>
+                    <h2 className="text-3xl font-semibold text-gray-900 transition-colors group-hover:text-violet-700">
+                      {quiz.subject}
+                    </h2>
+                    <p className="mt-2 text-gray-600">
+                      {quiz.questions?.length ?? 0} вопросов • Пароль:{" "}
+                      <span className="font-mono font-medium text-indigo-600">
+                        {quiz.password}
+                      </span>
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); copyPassword(quiz.password); }}
-                    className="px-4 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all"
-                  >
-                    📋 Копировать
-                  </button>
-
-                  <div className={`text-2xl text-gray-400 hover:text-gray-600 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
-                    ▼
-                  </div>
+                {/* Анимированная стрелка */}
+                <div
+                  className={`text-4xl text-gray-300 transition-all duration-300 group-hover:text-violet-400 ${
+                    isOpen ? "rotate-180 scale-110 text-violet-500" : ""
+                  }`}
+                >
+                  ▼
                 </div>
               </div>
 
-              {/* Плавно анимируемый контент */}
+              {/* Раскрывающийся контент */}
               <div
-                className={`grid transition-all duration-300 ease-out overflow-hidden ${
-                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                className={`overflow-hidden transition-all duration-500 ease-out ${
+                  isOpen ? "max-h-[3000px] opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
-                <div className="overflow-hidden">
-                  <div className="px-6 pb-8 pt-2 bg-gray-50">
-                    <h3 className="font-medium text-gray-700 mb-5 text-lg">Вопросы викторины:</h3>
-                    
-                    <div className="space-y-6">
-                      {quiz.questions?.map((q, index) => (
-                        <div
-                          key={index}
-                          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-                        >
-                          <div className="flex gap-4">
-                            <span className="text-indigo-600 font-bold text-xl shrink-0 mt-0.5">
-                              {index + 1}.
-                            </span>
-                            <p className="text-gray-800 text-[17px] leading-relaxed">
-                              {q.question}
-                            </p>
-                          </div>
+                <div className="bg-gradient-to-b from-gray-50 to-white px-8 pb-10 pt-2">
+                  <h3 className="mb-6 text-xl font-medium text-gray-700">
+                    Вопросы викторины:
+                  </h3>
 
-                          {q.answers && q.answers.length > 0 && (
-                            <div className="mt-5 pl-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              {q.answers.map((answer, i) => {
-                                const isCorrect = i === q.solution;
-                                return (
-                                  <div
-                                    key={i}
-                                    className={`px-5 py-4 rounded-2xl text-base border transition-all break-words overflow-hidden ${
-                                      isCorrect
-                                        ? "bg-green-100 border-green-400 text-green-800 font-medium"
-                                        : "bg-gray-50 border-gray-200 text-gray-700"
-                                    }`}
-                                  >
-                                    {/^data:image|https?:\/\//.test(answer) ? (
-  <img
-    src={answer}
-    alt={`answer-${i}`}
-    className="max-h-32 object-contain mx-auto"
-  />
-) : (
-  <span>{answer}</span>
-)}
-                                    {isCorrect && (
-                                      <span className="ml-2 text-green-600 font-medium">✓ правильный</span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-
-                          {(q.time || q.cooldown) && (
-                            <div className="mt-4 pl-10 text-sm text-gray-500 flex gap-5">
-                              {q.time && <span>⏱ {q.time} сек на ответ</span>}
-                              {q.cooldown && <span>⏳ Кулдаун: {q.cooldown} сек</span>}
-                            </div>
-                          )}
+                  <div className="space-y-6">
+                    {quiz.questions?.map((q, index) => (
+                      <div
+                        key={index}
+                        className="rounded-3xl border border-gray-100 bg-white p-7 shadow-sm"
+                      >
+                        <div className="flex gap-4">
+                          <span className="mt-1 shrink-0 text-2xl font-bold text-indigo-500">
+                            {index + 1}.
+                          </span>
+                          <p className="text-[17px] leading-relaxed text-gray-800">
+                            {q.question}
+                          </p>
                         </div>
-                      ))}
-                    </div>
 
-                    <div className="flex gap-4 mt-10">
-                      <Button
-                        onClick={() => copyPassword(quiz.password)}
-                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white border-0 py-3 transition-all active:scale-[0.98]"
-                      >
-                        📋 Скопировать пароль
-                      </Button>
-                      <Button
-                        onClick={() => window.location.href = `/manager?quiz=${quiz.password}`}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 transition-all active:scale-[0.98]"
-                      >
-                        🚀 Запустить викторину
-                      </Button>
-                    </div>
+                        {q.answers && q.answers.length > 0 && (
+                          <div className="mt-6 grid grid-cols-1 gap-4 pl-12 sm:grid-cols-2">
+                            {q.answers.map((answer, i) => {
+                              const isCorrect = i === q.solution
+                              return (
+                                <div
+                                  key={i}
+                                  className={`overflow-hidden break-words rounded-2xl border px-6 py-5 text-base transition-all ${
+                                    isCorrect
+                                      ? "border-emerald-400 bg-emerald-50 font-medium text-emerald-800"
+                                      : "border-gray-200 bg-white hover:border-gray-300"
+                                  }`}
+                                >
+                                  {/^data:image|https?:\/\//.test(answer) ? (
+                                    <img
+                                      src={answer}
+                                      alt={`answer-${i}`}
+                                      className="mx-auto max-h-32 object-contain"
+                                    />
+                                  ) : (
+                                    <span>{answer}</span>
+                                  )}
+                                  
+                                </div>
+                              )
+                            })}
+                          </div>
+                        )}
+
+                        {(q.time || q.cooldown) && (
+                          <div className="mt-6 flex flex-wrap gap-x-8 gap-y-2 pl-12 text-sm text-gray-600">
+                            {q.time && (
+                              <span>
+                                ⏱ <strong>{q.time}</strong> сек на ответ
+                              </span>
+                            )}
+                            {q.cooldown && (
+                              <span>
+                                ⏳ Кулдаун: <strong>{q.cooldown}</strong> сек
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Кнопки внизу */}
+                  <div className="mt-12 flex gap-4">
+                    <CustomButton
+                      onClick={() => copyPassword(quiz.password)}
+                      color="bg-gradient-to-r from-violet-600 to-indigo-600"
+                      hoverColor="from-emerald-600 to-teal-600"
+                      size="md"
+                      className="flex-1"
+                    >
+                      📋 Скопировать пароль
+                    </CustomButton>
+
+                    <CustomButton
+                      onClick={() =>
+                        (window.location.href = `/manager?quiz=${quiz.password}`)
+                      }
+                      color="bg-gradient-to-r from-indigo-600 to-violet-600"
+                      hoverColor="from-teal-600 to-emerald-700"
+                      size="md"
+                      className="flex-1"
+                    >
+                      🚀 Запустить викторину
+                    </CustomButton>
                   </div>
                 </div>
               </div>
             </div>
-          );
+          )
         })}
       </div>
-
     </div>
-  );
-};
+  )
+}
 
-export default QuizListPage;
+export default QuizListPage

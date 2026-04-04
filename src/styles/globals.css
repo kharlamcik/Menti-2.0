@@ -232,3 +232,15 @@ input {
   animation: shimmer 3.5s linear infinite;
 }
 
+@keyframes sakura {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+
+.animate-\[sakura_12s_linear_infinite\] {
+  animation: sakura 12s linear infinite;
+}
+
+.animate-\[sakura_18s_linear_infinite_reverse\] {
+  animation: sakura 18s linear infinite reverse;
+}

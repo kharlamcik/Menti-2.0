@@ -14,12 +14,12 @@ const Manager = {
       const quiz = await Quiz.findOne({ password })
 
       if (!quiz) {
-        io.to(socket.id).emit("game:errorMessage", "No quiz found with this password")
+        io.to(socket.id).emit("game:errorMessage", "Тест не найден по этому паролю")
         return
       }
 
       if (game.manager || game.room) {
-        io.to(socket.id).emit("game:errorMessage", "Already manager")
+        io.to(socket.id).emit("game:errorMessage", "Уже менеджер")
         return
       }
 
@@ -36,7 +36,7 @@ const Manager = {
       console.log("New room created: " + roomInvite)
     } catch (err) {
       console.error("Error in createRoom:", err)
-      io.to(socket.id).emit("game:errorMessage", "Server error while creating room")
+      io.to(socket.id).emit("game:errorMessage", "Ошибка сервера при создании комнаты.")
     }
   },
 

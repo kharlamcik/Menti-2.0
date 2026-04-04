@@ -8,7 +8,7 @@ import { socket } from "@/context/socket"
 import logo from "@/assets/8344b8154034ae498c1768b7a733805c.gif"
 import toast from "react-hot-toast"
 import background from "@/assets/e285661a023fb83c8d7f975980422c22.gif"
-
+import CustomButton from "@/components/QuizForm/components/CustomButton.tsx"
 
 export default function ManagerPassword() {
   const [loading, setLoading] = useState(false)
@@ -35,27 +35,35 @@ export default function ManagerPassword() {
   }, [])
 
   return (
-  <section className="relative flex min-h-screen flex-col items-center justify-center">
-    {/* Фон и затемнение */}
-    <div className="absolute left-0 top-0 -z-10 h-full w-full bg-black opacity-40" />
-    <Image
-      src={background}
-      alt="background"
-      className="absolute left-0 top-0 -z-20 h-full w-full object-cover opacity-90"
-    />
-
-    <Image src={logo} className="mb-6 h-32 w-80 rounded" alt="logo" />
-
-    <Form>
-      <Input
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Пароль от теста"
+    <section className="relative flex min-h-screen flex-col items-center justify-center">
+      {/* Фон и затемнение */}
+      <div className="absolute left-0 top-0 -z-10 h-full w-full bg-black opacity-40" />
+      <Image
+        src={background}
+        alt="background"
+        className="absolute left-0 top-0 -z-20 h-full w-full object-cover opacity-90"
       />
-      <Button onClick={() => handleCreate()}>OK</Button>
-    </Form>
-  </section>
-)
 
+      <Image src={logo} className="mb-6 h-32 w-80 rounded" alt="logo" />
+
+      <Form>
+        <Input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Пароль от теста"
+        />
+
+        <CustomButton
+          onClick={() => handleCreate()}
+          color="bg-gradient-to-r from-violet-600 to-indigo-600"
+          hoverColor="bg-gradient-to-r from-violet-700 to-indigo-700"
+          size="md"
+          className="flex-1"
+        >
+          OK
+        </CustomButton>
+      </Form>
+    </section>
+  )
 }
