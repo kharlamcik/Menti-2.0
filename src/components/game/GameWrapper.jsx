@@ -1,76 +1,87 @@
 import Image from "next/image"
-import Button from "@/components/Button"
-import background from "@/assets/background.webp"
 import { usePlayerContext } from "@/context/player"
 import { useSocketContext } from "@/context/socket"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
-import backgroundd from "@/assets/735d73725f77188e554756b5e11a2bf1.gif"
+import background from "@/assets/e285661a023fb83c8d7f975980422c22.gif" // основной фон
+import backgroundd from "@/assets/735d73725f77188e554756b5e11a2bf1.gif" // анимированный фон (если хочешь)
+import CustomButton from "@/components/QuizForm/components/CustomButton"
 
 export default function GameWrapper({ children, textNext, onNext, manager }) {
   const { socket } = useSocketContext()
   const { player, dispatch } = usePlayerContext()
   const router = useRouter()
 
-  const [questionState, setQuestionState] = useState()
+  const [questionState, setQuestionState] = useState(null)
 
   useEffect(() => {
     socket.on("game:kick", () => {
-      dispatch({
-        type: "LOGOUT",
-      })
-
+      dispatch({ type: "LOGOUT" })
       router.replace("/")
     })
 
     socket.on("game:updateQuestion", ({ current, total }) => {
-      setQuestionState({
-        current,
-        total,
-      })
+      setQuestionState({ current, total })
     })
 
     return () => {
       socket.off("game:kick")
       socket.off("game:updateQuestion")
     }
-  }, [])
+  }, [dispatch, router])
 
   return (
-    <section className="relative flex min-h-screen w-full flex-col justify-between">
-      <div className="fixed left-0 top-0 -z-10 h-full w-full bg-blue-600 opacity-85">
+    <section className="relative flex min-h-screen w-full flex-col">
+      {/* Фон */}
+      <div className="fixed inset-0 -z-10">
         <Image
-          className="pointer-events-none h-full w-full object-cover opacity-60"
           src={background}
           alt="background"
+          fill
+          className="object-cover opacity-90"
+          priority
         />
+        <div className="absolute inset-0 bg-black/60" />
+        {/* Дополнительный анимированный слой (по желанию) */}
+        
       </div>
 
-      <div className="flex w-full justify-between p-4">
+      {/* Верхняя панель */}
+      <div className="relative z-20 flex w-full items-center justify-between p-4">
         {questionState && (
-          <div className="shadow-inset flex items-center rounded-md bg-white p-2 px-4 text-lg font-bold text-black ">
+          <div className="flex items-center rounded-2xl bg-white/10 px-5 py-2.5 text-lg font-bold text-white backdrop-blur-md border border-white/10">
             {`${questionState.current} / ${questionState.total}`}
           </div>
         )}
 
         {manager && (
-          <Button
-            className="self-end bg-white px-4 !text-black transition-all duration-300 hover:scale-95"
-            onClick={() => onNext()}
+          <CustomButton
+            onClick={onNext}
+            color="bg-gradient-to-r from-violet-600 to-indigo-600"
+            hoverColor="from-violet-700 to-indigo-700"
+            size="md"
+            className="font-medium shadow-lg"
           >
             {textNext}
-          </Button>
+          </CustomButton>
         )}
       </div>
 
-      {children}
+      {/* Основной контент */}
+      <div className="relative z-10 flex flex-1 flex-col">
+        {children}
+      </div>
 
-      {!manager && (
-        <div className="z-50 flex items-center justify-between bg-white px-4 py-2 text-lg font-bold text-white rounded ml-10 mr-10 mb-4">
-          <p className="text-gray-800 hover:scale-105 transition-all duration-300">{!!player && player.username}</p>
-          
-          <div className="rounded-sm bg-gray-800 px-3 py-1 text-lg hover:scale-105 transition-all duration-300">
-            {!!player && player.points}
+      {/* Нижняя панель игрока (только для игроков) */}
+      {!manager && player && (
+        <div className="relative z-20 mx-4 mb-6 flex items-center justify-between rounded-3xl bg-white/10 px-6 py-4 backdrop-blur-2xl border border-white/10 shadow-2xl">
+          <p className="text-lg font-medium text-white">
+            {player.username}
+          </p>
+
+          <div className="flex items-center gap-2 rounded-2xl bg-white/10 px-5 py-2 text-lg font-bold text-white">
+            {player.points}
+            <span className="text-yellow-400">★</span>
           </div>
         </div>
       )}

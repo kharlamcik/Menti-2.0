@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import QuizForm from "../components/QuizForm/QuizForm";
-import QuizListPage from "../components/QuizForm/Qizicki";
-import AIQuizGenerator from "../components/QuizForm/AIQuizGenerator"; // ← новый импорт
-import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import background from "@/assets/e285661a023fb83c8d7f975980422c22.gif";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState } from "react"
+import QuizForm from "../components/QuizForm/QuizForm"
+import QuizListPage from "../components/QuizForm/Qizicki"
+import AIQuizGenerator from "../components/QuizForm/AIQuizGenerator"
+import CloudinaryLibrary from "../components/QuizForm/CloudinaryLibrary" // ← новый импорт
+import Link from "next/link"
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+import background from "@/assets/e285661a023fb83c8d7f975980422c22.gif"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 const CreateQuizPage = () => {
-  const [activeTab, setActiveTab] = useState("create");
+  const [activeTab, setActiveTab] = useState("create")
 
   const tabs = [
-  { id: "create", label: "Создать вручную", icon: "✨" },     // ← новая
-  { id: "history", label: "Мои викторины", icon: "📋" },
-  { id: "ai", label: "AI Генератор", icon: "🤖" },
-  { id: "settings", label: "Настройки", icon: "⚙️" },
-];
+    { id: "create", label: "Создать вручную", icon: "✨" }, // ← новая
+    { id: "history", label: "Мои викторины", icon: "📋" },
+    { id: "ai", label: "AI Генератор", icon: "🤖" },
+    { id: "settings", label: "Настройки", icon: "⚙️" },
+  ]
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden">
@@ -36,20 +37,22 @@ const CreateQuizPage = () => {
 
       {/* Хедер со стеклом */}
       <header className="relative z-20 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-xl font-bold text-white shadow-lg">
               M
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">Menti</h1>
-              <p className="text-xs text-gray-300 -mt-1">Live Quizzes</p>
+              <h1 className="text-2xl font-bold tracking-tight text-white">
+                Menti
+              </h1>
+              <p className="-mt-1 text-xs text-gray-300">Live Quizzes</p>
             </div>
           </div>
 
           <Link
             href="/manager"
-            className="px-6 py-2.5 text-sm font-medium text-white hover:bg-white/10 rounded-2xl transition-all active:scale-95 border border-white/10"
+            className="rounded-2xl border border-white/10 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/10 active:scale-95"
           >
             🚀 Запустить игру
           </Link>
@@ -57,32 +60,32 @@ const CreateQuizPage = () => {
       </header>
 
       {/* Основной контент */}
-      <div className="relative z-10 mx-auto max-w-5xl px-6 pt-12 pb-20">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-20 pt-12">
         {/* Заголовок со стеклом */}
-        <div className="text-center mb-12">
-          <div className="inline-block bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl px-10 py-6 mb-8">
-            <h2 className="text-5xl font-bold text-white mb-3 tracking-tighter">
+        <div className="mb-12 text-center">
+          <div className="mb-8 inline-block rounded-3xl border border-white/10 bg-white/5 px-10 py-6 backdrop-blur-2xl">
+            <h2 className="mb-3 text-5xl font-bold tracking-tighter text-white">
               Добро пожаловать в Menti
             </h2>
-            <p className="text-xl text-gray-300 max-w-md mx-auto">
+            <p className="mx-auto max-w-md text-xl text-gray-300">
               Создавай крутые викторины и запускай их в реальном времени
             </p>
           </div>
         </div>
 
         {/* Табы со стеклом и анимацией активной вкладки */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-white/5 backdrop-blur-2xl rounded-3xl p-1.5 border border-white/10 shadow-2xl relative">
+        <div className="mb-12 flex justify-center">
+          <div className="relative inline-flex rounded-3xl border border-white/10 bg-white/5 p-1.5 shadow-2xl backdrop-blur-2xl">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative px-8 py-3.5 rounded-2xl font-medium flex items-center gap-2 text-sm text-gray-300 hover:text-white transition"
+                className="relative flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-medium text-gray-300 transition hover:text-white"
               >
                 {activeTab === tab.id && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-white rounded-2xl"
+                    className="absolute inset-0 rounded-2xl bg-white"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -100,7 +103,7 @@ const CreateQuizPage = () => {
         </div>
 
         {/* Контент с общим стеклянным контейнером */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 min-h-[650px] shadow-2xl relative overflow-hidden">
+        <div className="relative min-h-[650px] overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-2xl">
           <AnimatePresence mode="wait">
             {activeTab === "create" && (
               <motion.div
@@ -125,37 +128,44 @@ const CreateQuizPage = () => {
                 <QuizListPage />
               </motion.div>
             )}
-            {activeTab === "ai" && (                     // ← новый блок
-            <motion.div
-              key="ai"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.35 }}
-            >
-              <AIQuizGenerator />
-            </motion.div>
-          )}
+            {activeTab === "ai" && ( // ← новый блок
+              <motion.div
+                key="ai"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.35 }}
+              >
+                <AIQuizGenerator />
+              </motion.div>
+            )}
             {activeTab === "settings" && (
               <motion.div
                 key="settings"
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3 }}
-                className="flex flex-col items-center justify-center h-[500px] text-center"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.4 }}
+                className="min-h-[650px]"
               >
-                <div className="text-6xl mb-6">⚙️</div>
-                <h3 className="text-3xl font-semibold text-white mb-4">Настройки</h3>
-                <p className="text-gray-400 text-lg max-w-md">
-                  Здесь скоро появятся настройки аккаунта, темы и другие параметры
-                </p>
+                <div className="mb-8 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-3xl font-bold text-white">
+                      Библиотека изображений
+                    </h2>
+                    <p className="mt-1 text-gray-400">
+                      Управление всеми загруженными фото в Cloudinary
+                    </p>
+                  </div>
+                </div>
+
+                <CloudinaryLibrary />
               </motion.div>
             )}
           </AnimatePresence>
         </div>
       </div>
-<ToastContainer
+      <ToastContainer
         position="top-center"
         autoClose={2200}
         hideProgressBar={false}
@@ -169,29 +179,26 @@ const CreateQuizPage = () => {
         theme="dark"
         style={{
           zIndex: 99999,
-          top: "100px",           // отступ ниже хедера со стеклом
+          top: "100px", // отступ ниже хедера со стеклом
         }}
-        toastClassName="glass-toast"           // главный класс для стиля
+        toastClassName="glass-toast" // главный класс для стиля
         bodyClassName="text-base font-medium"
-        progressClassName="h-1 bg-white/30"    // полоса прогресса в стиле стекла
+        progressClassName="h-1 bg-white/30" // полоса прогресса в стиле стекла
       />
       {/* Футер */}
-<footer className="relative z-10 text-center py-8 text-gray-500 text-sm">
-  Made with ❤️ for fun quizzes ·{" "}
-  <a
-    href="https://github.com/kharlamcik/Menti-2.0"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-indigo-400 hover:text-indigo-300 underline"
-  >
-    GitHub 🐙
-  </a>
-</footer>
-      
-      
-
+      <footer className="relative z-10 py-8 text-center text-sm text-gray-500">
+        Made with ❤️ for fun quizzes ·{" "}
+        <a
+          href="https://github.com/kharlamcik/Menti-2.0"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-indigo-400 underline hover:text-indigo-300"
+        >
+          GitHub 🐙
+        </a>
+      </footer>
     </section>
-  );
-};
+  )
+}
 
-export default CreateQuizPage;
+export default CreateQuizPage

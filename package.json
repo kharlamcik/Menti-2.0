@@ -1,5 +1,5 @@
 {
-  "name": "rahoot",
+  "name": "menti",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cloudinary": "^2.9.0",
     "clsx": "^2.1.0",
     "concurrently": "^8.2.2",
     "dotenv": "^16.5.0",

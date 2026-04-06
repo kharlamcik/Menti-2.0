@@ -1,10 +1,12 @@
-import React, { useRef, useState } from "react"
-import Button from "@/components/Button"
+import React, { useRef, useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import CustomButton from "./components/CustomButton"
 
 const IMGBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_API_KEY
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
 
 const QuizForm = () => {
   const [quiz, setQuiz] = useState({
@@ -35,11 +37,39 @@ const QuizForm = () => {
   ])
   const [uploading, setUploading] = useState(false)
 
+  // Модальные окна и галерея
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadType, setUploadType] = useState(null)
+  const [answerIndexForUpload, setAnswerIndexForUpload] = useState(null)
+
+  const [showGalleryModal, setShowGalleryModal] = useState(false)
+  const [cloudinaryImages, setCloudinaryImages] = useState([])
+  const [loadingGallery, setLoadingGallery] = useState(false)
+  const [galleryCursor, setGalleryCursor] = useState(null)
+
   const formRef = useRef(null)
   const questionRefs = useRef([])
   const fileInputRef = useRef(null)
 
-  // ====================== ЗАГРУЗКА НА IMGBB ======================
+  // ====================== ЗАЩИТА ОТ ПОТЕРИ ИЗМЕНЕНИЙ ======================
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault()
+        e.returnValue =
+          "У вас есть несохранённые изменения.\n\nВы действительно хотите уйти без сохранения?"
+        return e.returnValue
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [hasUnsavedChanges])
+
+  // ====================== ЗАГРУЗКА ======================
   const uploadToImgBB = async (file) => {
     if (!IMGBB_API_KEY) {
       toast.error("ImgBB API ключ не настроен в .env.local")
@@ -53,10 +83,7 @@ const QuizForm = () => {
     try {
       const res = await fetch(
         `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-        {
-          method: "POST",
-          body: formData,
-        },
+        { method: "POST", body: formData },
       )
 
       const data = await res.json()
@@ -75,7 +102,35 @@ const QuizForm = () => {
     }
   }
 
-  // Загрузка файла с компьютера
+  const uploadToCloudinary = async (file) => {
+    setUploading(true)
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("upload_preset", UPLOAD_PRESET)
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData },
+      )
+
+      const data = await res.json()
+
+      if (data.secure_url) {
+        toast.success("Изображение загружено!")
+        return data.secure_url
+      } else {
+        toast.error("Ошибка загрузки")
+        return null
+      }
+    } catch (err) {
+      toast.error("Ошибка соединения")
+      return null
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const handleImageUpload = async (
     e,
     isQuestionImage = true,
@@ -89,7 +144,7 @@ const QuizForm = () => {
       return
     }
 
-    const imageUrl = await uploadToImgBB(file)
+    const imageUrl = await uploadToCloudinary(file)
     if (!imageUrl) return
 
     if (isQuestionImage) {
@@ -105,7 +160,6 @@ const QuizForm = () => {
     }
   }
 
-  // Проверка ссылки (оставил как было)
   const checkImageUrl = (url, isQuestionImage = true, answerIndex = null) => {
     if (!url) {
       if (isQuestionImage) setImageError(false)
@@ -137,15 +191,48 @@ const QuizForm = () => {
     img.src = url
   }
 
-  const checkUnsavedChanges = (callback) => {
-    if (hasUnsavedChanges && editIndex !== null) {
-      if (
-        window.confirm(
-          "Есть несохранённые изменения. Сохранить перед переходом?",
+  const fetchCloudinaryImages = async (cursor = null) => {
+    setLoadingGallery(true)
+    try {
+      const url = `/api/cloudinary-images?max_results=30${cursor ? `&next_cursor=${cursor}` : ""}`
+      const res = await fetch(url)
+      const data = await res.json()
+
+      if (res.ok) {
+        setCloudinaryImages((prev) =>
+          cursor ? [...prev, ...data.resources] : data.resources,
         )
-      ) {
+        setGalleryCursor(data.next_cursor)
+      } else {
+        toast.error(data.error || "Ошибка загрузки галереи")
+      }
+    } catch (err) {
+      toast.error("Не удалось подключиться к Cloudinary")
+    } finally {
+      setLoadingGallery(false)
+    }
+  }
+
+  const openCloudinaryGallery = () => {
+    setShowUploadModal(false)
+    setShowGalleryModal(true)
+    setCloudinaryImages([])
+    setGalleryCursor(null)
+    fetchCloudinaryImages()
+  }
+
+  // ====================== ЗАЩИТА ОТ ПОТЕРИ ИЗМЕНЕНИЙ ======================
+  const checkUnsavedChanges = (callback) => {
+    if (hasUnsavedChanges) {
+      const confirmLeave = window.confirm(
+        "У вас есть несохранённые изменения.\n\nСохранить перед переходом?",
+      )
+
+      if (confirmLeave) {
         handleAddQuestion()
-      } else return
+      } else {
+        return
+      }
     }
     callback()
   }
@@ -175,6 +262,7 @@ const QuizForm = () => {
           questions: data.questions,
         })
         toast.success("Викторина загружена!")
+        setHasUnsavedChanges(false)
       } else {
         toast.info("Создаём новую викторину")
       }
@@ -249,6 +337,12 @@ const QuizForm = () => {
     setHasUnsavedChanges(true)
   }
 
+  // Обновление quiz (пароль и тема)
+  const updateQuiz = (newQuizData) => {
+    setQuiz(newQuizData)
+    setHasUnsavedChanges(true)
+  }
+
   const saveQuiz = async () => {
     if (!quiz.password || !quiz.subject)
       return toast.error("Заполните пароль и тему")
@@ -261,14 +355,29 @@ const QuizForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(quiz),
       })
-      if (res.ok) toast.success("Викторина успешно сохранена!")
-      else toast.error("Ошибка при сохранении")
+      if (res.ok) {
+        toast.success("Викторина успешно сохранена!")
+        setHasUnsavedChanges(false)
+      } else {
+        toast.error("Ошибка при сохранении")
+      }
     } catch (err) {
       toast.error("Ошибка соединения")
     }
   }
 
-  // ====================== Блок с вопросами ======================
+  const ModalPortal = ({ children }) => {
+    if (typeof window === "undefined") return null
+
+    return createPortal(
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-auto bg-black/70 p-4">
+        {children}
+      </div>,
+      document.body,
+    )
+  }
+
+  // ====================== JSX ======================
   return (
     <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-10 text-center text-4xl font-bold text-white">
@@ -283,7 +392,7 @@ const QuizForm = () => {
             type="text"
             value={quiz.password}
             onChange={(e) =>
-              setQuiz({ ...quiz, password: e.target.value.toUpperCase() })
+              updateQuiz({ ...quiz, password: e.target.value.toUpperCase() })
             }
             placeholder="Например: ABC123"
             className="flex-1 rounded-2xl border border-gray-300 px-6 py-4 font-mono text-lg focus:border-indigo-500 focus:outline-none"
@@ -308,12 +417,12 @@ const QuizForm = () => {
         <input
           type="text"
           value={quiz.subject}
-          onChange={(e) => setQuiz({ ...quiz, subject: e.target.value })}
+          onChange={(e) => updateQuiz({ ...quiz, subject: e.target.value })}
           className="w-full rounded-2xl border border-gray-300 px-6 py-4 text-lg focus:border-indigo-500 focus:outline-none"
         />
       </div>
 
-      {/* Форма */}
+      {/* Форма вопроса */}
       <div ref={formRef} className="mb-12 rounded-3xl bg-white p-8 shadow-lg">
         <h2 className="mb-6 text-2xl font-semibold">
           {editIndex !== null
@@ -322,6 +431,7 @@ const QuizForm = () => {
         </h2>
 
         <div className="space-y-6">
+          {/* Текст вопроса */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Текст вопроса
@@ -361,13 +471,26 @@ const QuizForm = () => {
               <CustomButton
                 type="button"
                 disabled={uploading}
-                onClick={() => fileInputRef.current.click()}
+                onClick={() => {
+                  setUploadType("question")
+                  setAnswerIndexForUpload(null)
+                  setShowUploadModal(true)
+                }}
                 color="bg-gradient-to-r from-indigo-600 to-purple-600"
                 hoverColor="from-emerald-700 to-teal-600"
                 size="md"
                 className="px-6"
               >
-                {uploading ? "Загрузка..." : "📤 Загрузить"}
+                {uploading ? (
+    <>
+      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+      <span>Загрузка...</span>
+    </>
+  ) : (
+    <>
+      📤 <span className="hidden sm:inline">Загрузить</span>
+    </>
+  )}
               </CustomButton>
             </div>
             <input
@@ -424,18 +547,23 @@ const QuizForm = () => {
                     type="button"
                     disabled={uploading}
                     onClick={() => {
-                      const input = document.createElement("input")
-                      input.type = "file"
-                      input.accept = "image/*"
-                      input.onchange = (e) => handleImageUpload(e, false, i)
-                      input.click()
+                      setUploadType("answer")
+                      setAnswerIndexForUpload(i)
+                      setShowUploadModal(true)
                     }}
                     color="bg-gradient-to-r from-indigo-600 to-purple-600"
                     hoverColor="from-emerald-700 to-teal-600"
                     size="md"
-                    className="aspect-square px-5" // делаем кнопку квадратной, чтобы эмодзи выглядел хорошо
+                    className="flex items-center justify-center gap-2 px-5"
                   >
-                    📤
+                    {uploading ? (
+                      <>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+                        <span>Загрузка...</span>
+                      </>
+                    ) : (
+                      <>📤</>
+                    )}
                   </CustomButton>
                 </div>
 
@@ -535,7 +663,7 @@ const QuizForm = () => {
         </div>
       </div>
 
-      {/* Список вопросов (оставил как в твоём последнем варианте) */}
+      {/* Список вопросов */}
       <h2 className="mb-6 text-2xl font-semibold text-white">
         Добавленные вопросы ({quiz.questions.length})
       </h2>
@@ -543,9 +671,6 @@ const QuizForm = () => {
       <div className="space-y-6">
         {quiz.questions.map((q, index) => {
           const isOpen = openQuestionIndex === index
-          const hasAnswerImages = q.answers.some(
-            (a) => a && /https?:\/\/|data:image/.test(a),
-          )
 
           return (
             <div
@@ -553,24 +678,19 @@ const QuizForm = () => {
               ref={(el) => (questionRefs.current[index] = el)}
               className="group relative mx-auto w-full max-w-3xl overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-2xl"
             >
-              {/* Анимированная полоска сакуры */}
               <div className="absolute left-0 right-0 top-0 h-2 overflow-hidden bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500">
-                {/* Имитация падающих лепестков сакуры */}
                 <div className="absolute inset-0 animate-[sakura_12s_linear_infinite] bg-[radial-gradient(#fff_0.8px,transparent_1px)] opacity-30 [background-size:40px_40px]" />
                 <div className="absolute inset-0 animate-[sakura_18s_linear_infinite_reverse] bg-[radial-gradient(#fff_0.6px,transparent_1px)] opacity-20 [background-size:60px_60px]" />
               </div>
 
-              {/* Основная часть карточки */}
               <div
                 onClick={() => toggleQuestion(index)}
                 className="flex cursor-pointer items-center justify-between p-7 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-violet-50 group-hover:to-fuchsia-50"
               >
                 <div className="flex items-center gap-5">
-                  {/* Номер вопроса — идеально по центру вертикали */}
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl font-bold text-white shadow-lg transition-transform group-hover:scale-110">
                     {index + 1}
                   </div>
-
                   <div>
                     <h3 className="text-2xl font-semibold text-gray-900 transition-colors group-hover:text-violet-700">
                       Вопрос {index + 1}
@@ -581,7 +701,6 @@ const QuizForm = () => {
                   </div>
                 </div>
 
-                {/* Анимированная стрелка */}
                 <div
                   className={`ml-6 text-4xl text-gray-300 transition-all duration-300 group-hover:text-violet-400 ${
                     isOpen ? "rotate-180 scale-110 text-violet-500" : ""
@@ -591,15 +710,12 @@ const QuizForm = () => {
                 </div>
               </div>
 
-              {/* Контент (остальной код без изменений, только чуть подправил отступы) */}
               <div
                 className={`overflow-hidden transition-all duration-500 ease-out ${
                   isOpen ? "max-h-[2200px] opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
                 <div className="bg-gradient-to-b from-gray-50 to-white px-7 pb-10 pt-3">
-                  {/* ... весь остальной контент (вопрос, изображение, ответы, время и кнопки) остаётся как в предыдущей версии ... */}
-
                   <div className="mb-8 rounded-3xl bg-white p-7 shadow-sm ring-1 ring-gray-100">
                     <p className="text-[17.5px] leading-relaxed text-gray-800">
                       {q.question}
@@ -645,12 +761,7 @@ const QuizForm = () => {
                             <span className="text-[16px]">{ans}</span>
                           )}
                           {i === q.solution && (
-                            <div className="mt-4 inline-flex items-center gap-2 text-emerald-600">
-                              <span className="text-xl">✓</span>
-                              <span className="font-medium">
-                                Правильный ответ
-                              </span>
-                            </div>
+                            <div className="mt-4 inline-flex items-center gap-2 text-emerald-600"></div>
                           )}
                         </div>
                       ))}
@@ -683,7 +794,6 @@ const QuizForm = () => {
                     >
                       ✏️ Редактировать
                     </CustomButton>
-
                     <CustomButton
                       onClick={() => handleDeleteQuestion(index)}
                       color="bg-gradient-to-r from-red-500 to-rose-600"
@@ -716,6 +826,146 @@ const QuizForm = () => {
       >
         💾 Сохранить викторину в базу данных
       </CustomButton>
+
+      {/* Модальные окна */}
+      {showUploadModal && (
+        <ModalPortal>
+          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+            <h3 className="mb-6 text-center text-2xl font-semibold text-gray-900">
+              Как добавить изображение?
+            </h3>
+
+            <div className="grid gap-4">
+              <button
+                onClick={() => {
+                  setShowUploadModal(false)
+                  if (uploadType === "question") {
+                    fileInputRef.current.click()
+                  } else if (
+                    uploadType === "answer" &&
+                    answerIndexForUpload !== null
+                  ) {
+                    const input = document.createElement("input")
+                    input.type = "file"
+                    input.accept = "image/*"
+                    input.onchange = (e) =>
+                      handleImageUpload(e, false, answerIndexForUpload)
+                    input.click()
+                  }
+                }}
+                className="w-full rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 py-4 text-lg font-medium text-white transition hover:brightness-110"
+              >
+                📤 Загрузить новый файл с компьютера
+              </button>
+
+              <button
+                onClick={openCloudinaryGallery}
+                className="w-full rounded-2xl border-2 border-gray-300 py-4 text-lg font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                🖼 Выбрать из ранее загруженных (Cloudinary)
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowUploadModal(false)}
+              className="mt-6 w-full py-3 text-gray-500 hover:text-gray-700"
+            >
+              Отмена
+            </button>
+          </div>
+        </ModalPortal>
+      )}
+
+      {showGalleryModal && (
+        <ModalPortal>
+          <div className="flex max-h-[88vh] w-full max-w-5xl flex-col rounded-3xl bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-3xl border-b bg-white px-8 py-5">
+              <h3 className="text-2xl font-semibold text-gray-900">
+                Выберите изображение из Cloudinary
+              </h3>
+              <button
+                onClick={() => setShowGalleryModal(false)}
+                className="text-4xl leading-none text-gray-400 transition hover:text-red-600"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-auto p-6">
+              {loadingGallery && cloudinaryImages.length === 0 ? (
+                <div className="flex h-96 items-center justify-center">
+                  <p className="text-lg text-gray-500">
+                    Загружаем изображения...
+                  </p>
+                </div>
+              ) : cloudinaryImages.length === 0 ? (
+                <div className="flex h-80 flex-col items-center justify-center text-center">
+                  <p className="text-xl text-gray-400">Изображений пока нет</p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Загрузите изображения в Cloudinary
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                  {cloudinaryImages.map((img) => (
+                    <div
+                      key={img.public_id}
+                      onClick={() => {
+                        const url = img.secure_url
+                        if (uploadType === "question") {
+                          updateCurrentQuestion({
+                            ...currentQuestion,
+                            image: url,
+                          })
+                          setImageError(false)
+                        } else if (
+                          uploadType === "answer" &&
+                          answerIndexForUpload !== null
+                        ) {
+                          const newAnswers = [...currentQuestion.answers]
+                          newAnswers[answerIndexForUpload] = url
+                          updateCurrentQuestion({
+                            ...currentQuestion,
+                            answers: newAnswers,
+                          })
+                          const newErrors = [...answerImageErrors]
+                          newErrors[answerIndexForUpload] = false
+                          setAnswerImageErrors(newErrors)
+                        }
+                        setShowGalleryModal(false)
+                        toast.success("Изображение выбрано!")
+                      }}
+                      className="group cursor-pointer overflow-hidden rounded-2xl border border-gray-200 transition-all hover:border-violet-500 hover:shadow-xl"
+                    >
+                      <div className="relative aspect-square bg-gray-100">
+                        <img
+                          src={img.secure_url}
+                          alt=""
+                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="truncate border-t bg-gray-50 p-2.5 text-xs text-gray-500">
+                        {img.public_id.split("/").pop()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {galleryCursor && (
+                <div className="mt-8 flex justify-center">
+                  <CustomButton
+                    onClick={() => fetchCloudinaryImages(galleryCursor)}
+                    disabled={loadingGallery}
+                  >
+                    {loadingGallery ? "Загрузка..." : "Загрузить ещё"}
+                  </CustomButton>
+                </div>
+              )}
+            </div>
+          </div>
+        </ModalPortal>
+      )}
     </div>
   )
 }

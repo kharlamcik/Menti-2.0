@@ -28,17 +28,17 @@ const Player = {
     }
 
     if (!game.room || player.room !== game.room) {
-      socket.emit("game:errorMessage", "Room not found")
+      socket.emit("game:errorMessage", "Комната не найдена")
       return
     }
 
     if (game.players.find((p) => p.username === player.username)) {
-      socket.emit("game:errorMessage", "Username already exists")
+      socket.emit("game:errorMessage", "Имя пользователя уже существует")
       return
     }
 
     if (game.started) {
-      socket.emit("game:errorMessage", "Game already started")
+      socket.emit("game:errorMessage", "Игра уже началась")
       return
     }
 

@@ -233,16 +233,16 @@ const QuizListPage = () => {
                     </CustomButton>
 
                     <CustomButton
-                      onClick={() =>
-                        (window.location.href = `/manager?quiz=${quiz.password}`)
-                      }
-                      color="bg-gradient-to-r from-indigo-600 to-violet-600"
-                      hoverColor="from-teal-600 to-emerald-700"
-                      size="md"
-                      className="flex-1"
-                    >
-                      🚀 Запустить викторину
-                    </CustomButton>
+    onClick={() => {
+      window.location.href = `/manager?password=${encodeURIComponent(quiz.password)}`;
+    }}
+    color="bg-gradient-to-r from-indigo-600 to-violet-600"
+    hoverColor="from-teal-600 to-emerald-700"
+    size="md"
+    className="flex-1"
+  >
+    🚀 Запустить викторину
+  </CustomButton>
                   </div>
                 </div>
               </div>
